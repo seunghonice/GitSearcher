@@ -59,9 +59,11 @@ class SearcherViewModel : ViewModel() {
                 }
 
                 noResult.set(count == 0)
+                processing.set(false)
                 Log.d(TAG, "불러오기 끝 !")
             } catch (e: Exception) {
                 e.printStackTrace()
+                processing.set(false)
             }
         }
     }
