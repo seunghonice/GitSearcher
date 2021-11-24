@@ -40,6 +40,18 @@ class SearcherActivity : AppCompatActivity() {
     @SuppressLint("ClickableViewAccessibility")
     private fun viewSetting() {
         binding.run {
+
+            // 검색바 터치 동작
+            etSearchBar.setOnTouchListener { v, event ->
+                if (event.action == MotionEvent.ACTION_UP) {
+                    cancelSearching()
+                    v.requestFocus()
+                    showSoftKeyboard(v)
+                    return@setOnTouchListener true
+                }
+                return@setOnTouchListener false
+            }
+
             // 검색바 작성 중 엔터
             etSearchBar.setOnKeyListener { _, keyCode, event ->
                 if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) { // 엔터
