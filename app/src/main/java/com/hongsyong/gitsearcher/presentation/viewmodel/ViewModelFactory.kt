@@ -1,4 +1,4 @@
-package com.hongsyong.gitsearcher.viewmodel
+package com.hongsyong.gitsearcher.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
