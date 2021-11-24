@@ -5,8 +5,10 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -89,6 +91,7 @@ class SearcherActivity : AppCompatActivity() {
                 etSearchBar.text.clear()
                 vm.noResult.set(false)
                 etSearchBar.requestFocus()
+                showSoftKeyboard(etSearchBar)
             }
 
             // 결과 리스트
@@ -132,6 +135,7 @@ class SearcherActivity : AppCompatActivity() {
             // search 시작!
             vm.page.set(page)
             vm.searchRepositories(etSearchBar.text.toString())
+            hideSoftKeyboard(etSearchBar)
             etSearchBar.clearFocus()
         }
         return true
@@ -142,5 +146,15 @@ class SearcherActivity : AppCompatActivity() {
         if (!vm.processing.get()) return
 
         vm.cancelSearch()
+    }
+
+    private fun showSoftKeyboard(v: View) {
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT)
+    }
+
+    private fun hideSoftKeyboard(v: View) {
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(currentFocus?.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
     }
 }
