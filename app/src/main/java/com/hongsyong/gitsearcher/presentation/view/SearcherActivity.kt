@@ -1,12 +1,23 @@
-package com.hongsyong.gitsearcher
+package com.hongsyong.gitsearcher.presentation.view
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.KeyEvent
+import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.hongsyong.gitsearcher.R
 import com.hongsyong.gitsearcher.databinding.ActivitySearcherBinding
-import com.hongsyong.gitsearcher.viewmodel.SearcherViewModel
-import com.hongsyong.gitsearcher.viewmodel.ViewModelFactory
+import com.hongsyong.gitsearcher.presentation.adapter.ResultAdapter
+import com.hongsyong.gitsearcher.presentation.viewmodel.SearcherViewModel
+import com.hongsyong.gitsearcher.presentation.viewmodel.ViewModelFactory
 
 class SearcherActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearcherBinding
@@ -29,7 +40,6 @@ class SearcherActivity : AppCompatActivity() {
     @SuppressLint("ClickableViewAccessibility")
     private fun viewSetting() {
         binding.run {
-
             // 검색바 작성 중 엔터
             etSearchBar.setOnKeyListener { _, keyCode, event ->
                 if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) { // 엔터

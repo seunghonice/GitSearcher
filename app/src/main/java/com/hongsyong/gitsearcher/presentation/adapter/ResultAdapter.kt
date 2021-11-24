@@ -1,4 +1,4 @@
-package com.hongsyong.gitsearcher.adapter
+package com.hongsyong.gitsearcher.presentation.adapter
 
 import android.content.Context
 import android.content.Intent
@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.hongsyong.gitsearcher.R
-import com.hongsyong.gitsearcher.model.Repository
+import com.hongsyong.gitsearcher.data.model.Repository
 
 class ResultAdapter(var results: List<Repository>?, private val context: Context) :
     RecyclerView.Adapter<ResultAdapter.ViewHolder>() {

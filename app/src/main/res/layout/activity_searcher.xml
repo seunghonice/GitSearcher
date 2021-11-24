@@ -9,7 +9,7 @@
 
         <variable
             name="viewmodel"
-            type="com.hongsyong.gitsearcher.viewmodel.SearcherViewModel" />
+            type="com.hongsyong.gitsearcher.presentation.viewmodel.SearcherViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

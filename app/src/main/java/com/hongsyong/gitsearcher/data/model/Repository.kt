@@ -1,4 +1,4 @@
-package com.hongsyong.gitsearcher.model
+package com.hongsyong.gitsearcher.data.model
 
 import com.google.gson.annotations.SerializedName
 
