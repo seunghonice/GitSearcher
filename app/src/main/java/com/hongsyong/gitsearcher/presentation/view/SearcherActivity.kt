@@ -148,6 +148,21 @@ class SearcherActivity : AppCompatActivity() {
         vm.cancelSearch()
     }
 
+    private var backKeyPressedTime = 0L
+    private lateinit var toast: Toast
+    override fun onBackPressed() {
+        if (System.currentTimeMillis() > backKeyPressedTime + 2000) {
+            backKeyPressedTime = System.currentTimeMillis()
+            if (!::toast.isInitialized)
+                toast = Toast.makeText(this, "\'뒤로\' 버튼을 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT)
+            toast.show()
+            return
+        } else {
+            finish()
+            toast.cancel()
+        }
+    }
+
     private fun showSoftKeyboard(v: View) {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT)
