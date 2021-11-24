@@ -5,8 +5,10 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -40,6 +42,18 @@ class SearcherActivity : AppCompatActivity() {
     @SuppressLint("ClickableViewAccessibility")
     private fun viewSetting() {
         binding.run {
+
+            // 검색바 터치 동작
+            etSearchBar.setOnTouchListener { v, event ->
+                if (event.action == MotionEvent.ACTION_UP) {
+                    cancelSearching()
+                    v.requestFocus()
+                    showSoftKeyboard(v)
+                    return@setOnTouchListener true
+                }
+                return@setOnTouchListener false
+            }
+
             // 검색바 작성 중 엔터
             etSearchBar.setOnKeyListener { _, keyCode, event ->
                 if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) { // 엔터
@@ -59,6 +73,9 @@ class SearcherActivity : AppCompatActivity() {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
                 override fun afterTextChanged(s: Editable?) {
+                    if (vm.processing.get()) {
+                        cancelSearching()
+                    }
                     // 검색어 삭제버튼 표시
                     ivCancel.visibility = if (s?.isEmpty() == true) View.GONE else View.VISIBLE
                 }
@@ -74,6 +91,7 @@ class SearcherActivity : AppCompatActivity() {
                 etSearchBar.text.clear()
                 vm.noResult.set(false)
                 etSearchBar.requestFocus()
+                showSoftKeyboard(etSearchBar)
             }
 
             // 결과 리스트
@@ -110,11 +128,48 @@ class SearcherActivity : AppCompatActivity() {
                 return false
             }
 
+            // search 중이었다면 cancel
+            if (vm.processing.get())
+                cancelSearching()
+
             // search 시작!
             vm.page.set(page)
             vm.searchRepositories(etSearchBar.text.toString())
+            hideSoftKeyboard(etSearchBar)
             etSearchBar.clearFocus()
         }
         return true
+    }
+
+    private fun cancelSearching() {
+        // processing 중일때만 수행하도록
+        if (!vm.processing.get()) return
+
+        vm.cancelSearch()
+    }
+
+    private var backKeyPressedTime = 0L
+    private lateinit var toast: Toast
+    override fun onBackPressed() {
+        if (System.currentTimeMillis() > backKeyPressedTime + 2000) {
+            backKeyPressedTime = System.currentTimeMillis()
+            if (!::toast.isInitialized)
+                toast = Toast.makeText(this, "\'뒤로\' 버튼을 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT)
+            toast.show()
+            return
+        } else {
+            finish()
+            toast.cancel()
+        }
+    }
+
+    private fun showSoftKeyboard(v: View) {
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT)
+    }
+
+    private fun hideSoftKeyboard(v: View) {
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(currentFocus?.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
     }
 }
