@@ -59,6 +59,9 @@ class SearcherActivity : AppCompatActivity() {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
                 override fun afterTextChanged(s: Editable?) {
+                    if (vm.processing.get()) {
+                        cancelSearching()
+                    }
                     // 검색어 삭제버튼 표시
                     ivCancel.visibility = if (s?.isEmpty() == true) View.GONE else View.VISIBLE
                 }
@@ -110,11 +113,22 @@ class SearcherActivity : AppCompatActivity() {
                 return false
             }
 
+            // search 중이었다면 cancel
+            if (vm.processing.get())
+                cancelSearching()
+
             // search 시작!
             vm.page.set(page)
             vm.searchRepositories(etSearchBar.text.toString())
             etSearchBar.clearFocus()
         }
         return true
+    }
+
+    private fun cancelSearching() {
+        // processing 중일때만 수행하도록
+        if (!vm.processing.get()) return
+
+        vm.cancelSearch()
     }
 }

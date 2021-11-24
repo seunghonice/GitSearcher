@@ -7,9 +7,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hongsyong.gitsearcher.data.model.Repository
+import com.hongsyong.gitsearcher.data.model.ResponseBody
 import com.hongsyong.gitsearcher.data.repository.SearcherRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import retrofit2.Call
 import retrofit2.await
 
 class SearcherViewModel : ViewModel() {
@@ -22,8 +24,7 @@ class SearcherViewModel : ViewModel() {
     val page = ObservableInt(1)
     val maxCount = ObservableInt(1)
 
-
-//    private var searchingJob: Call<ResponseBody>? = null
+    private var searchingJob: Call<ResponseBody>? = null
 
     fun searchRepositories(query: String) {
         if (!processing.get()) processing.set(true)
@@ -31,9 +32,10 @@ class SearcherViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 Log.d(TAG, "불러오기 시작~ !")
-                val body = SearcherRepository.searchRepositories(query, page.get()).await()
+                searchingJob = SearcherRepository.searchRepositories(query, page.get())
+                val body = searchingJob?.await()
 
-                val count = body.totalCount ?: 0
+                val count = body?.totalCount ?: 0
 
                 // 데이터가 없는 경우
                 if (count == 0) {
@@ -44,7 +46,7 @@ class SearcherViewModel : ViewModel() {
                     return@launch
                 }
 
-                val items = body.items
+                val items = body?.items!!
                 if (page.get() > 1) {
                     if (items.isNotEmpty()) {
                         // append
@@ -68,10 +70,10 @@ class SearcherViewModel : ViewModel() {
         }
     }
 
-//    fun cancelSearch() {
-//        searchingJob?.cancel()
-//        searchingJob = null
-//        Log.d("shhong", "불러오기 취소 !")
-//        processing.set(false)
-//    }
+    fun cancelSearch() {
+        searchingJob?.cancel()
+        searchingJob = null
+        Log.d(TAG, "불러오기 취소 !")
+        processing.set(false)
+    }
 }
