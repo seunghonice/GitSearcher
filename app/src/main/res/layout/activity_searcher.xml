@@ -8,7 +8,7 @@
         <import type="android.view.View" />
 
         <variable
-            name="vm"
+            name="viewmodel"
             type="com.hongsyong.gitsearcher.viewmodel.SearcherViewModel" />
     </data>
 
@@ -132,7 +132,7 @@
                     android:id="@+id/rv_results"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:visibility="@{vm.noResult ? View.GONE : View.VISIBLE}"
+                    android:visibility="@{viewmodel.noResult ? View.GONE : View.VISIBLE}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -140,7 +140,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/no_results"
-                    android:visibility="@{vm.noResult ? View.VISIBLE : View.GONE}"
+                    android:visibility="@{viewmodel.noResult ? View.VISIBLE : View.GONE}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -152,7 +152,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:indeterminateTint="@color/main_color"
-                    android:visibility="@{vm.processing ? View.VISIBLE : View.GONE}"
+                    android:visibility="@{viewmodel.processing ? View.VISIBLE : View.GONE}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
