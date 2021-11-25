@@ -26,13 +26,17 @@ class SearcherViewModel : ViewModel() {
 
     private var searchingJob: Call<ResponseBody>? = null
 
-    fun searchRepositories(query: String) {
+    fun searchRepositories(query: String, page: Int) {
+        // 진행중이었다면 취소
+        if (processing.get()) cancelSearch()
+
+        this.page.set(page)
         if (!processing.get()) processing.set(true)
         noResult.set(false)
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 Log.d(TAG, "불러오기 시작~ !")
-                searchingJob = SearcherRepository.searchRepositories(query, page.get())
+                searchingJob = SearcherRepository.searchRepositories(query, this@SearcherViewModel.page.get())
                 val body = searchingJob?.await()
 
                 val count = body?.totalCount ?: 0
@@ -47,7 +51,7 @@ class SearcherViewModel : ViewModel() {
                 }
 
                 val items = body?.items!!
-                if (page.get() > 1) {
+                if (this@SearcherViewModel.page.get() > 1) {
                     if (items.isNotEmpty()) {
                         // append
                         results.postValue(results.value?.plus(items))
@@ -71,6 +75,9 @@ class SearcherViewModel : ViewModel() {
     }
 
     fun cancelSearch() {
+        // processing 중일때만 수행하도록
+        if (!processing.get()) return
+
         searchingJob?.cancel()
         searchingJob = null
         Log.d(TAG, "불러오기 취소 !")
